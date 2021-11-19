@@ -47,8 +47,17 @@
       width: 122px;
     }
   </style>
-</head>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "d21fb0050c2e42089559af0b6f24c19c"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+    TrackJS.track('Testing TrackJS!');
+  </script>
+</head>
+                        
 <body>
   <main>
     <form>
@@ -69,25 +78,78 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <!-- Step 2: Add functionality for buttons -->
+      <button onclick = "console.log('Demo Log!')"> 
+        Console Log 
+      </button>
+
+      <button onclick = "console.error('Demo Error')"> 
+        Console Error 
+      </button>
+
+      <button onclick = "console.count('Demo Count')"> 
+        Console Count 
+      </button>
+
+      <button onclick = "console.warn('Demo Warn')">
+        Console Warn 
+      </button>
+
+      <button onclick = "console.assert(9 < 0, '9 is greater than 0, not less than.')">
+        Console Assert
+      </button>
+
+      <button onclick = "console.clear()"> 
+        Console Clear 
+      </button>
+
+      <button onclick = "console.dir(document.body)">
+        Console Dir
+      </button>
+
+      <button onclick = "console.dirxml(document.body)">
+        Console dirxml
+      </button>
+
+      <button onclick = "demoGroupStart()">
+        Console Group Start
+      </button>
+
+      <button onclick = "demoGroupEnd()">
+        Console Group End
+      </button>
+
+      <button onclick = "demoTable()">
+        Console Table
+      </button>
+
+      <button onclick = "demoTimerStart()">
+        Start Timer
+      </button>
+
+      <button onclick = "demoTimerEnd()">
+        End Timer
+      </button>
+
+      <button onclick = "demoTrace()">
+        Console Trace
+      </button>
+
+      <button onclick = "demoGlobalError()">
+        Trigger a Global Error
+      </button>
     </section>
   </main>
 
   <script>
+
+    class WrongTypeError extends Error {
+      constructor(message) {
+        super(message); 
+        this.name = "WrongTypeError";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,6 +157,34 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
+      console.log(typeof firstNum);
+      try {
+        // Step 3: Throw regular error for firstNum
+        if (isNaN(firstNum)){
+          throw new TypeError("First input is not a number");
+        }
+
+        // Step 4: Throw custom error for secondNum
+        if (isNaN(secondNum)){
+          throw new WrongTypeError("Second input is not a number");
+        }
+      }
+      
+      catch (err) {
+        if (err instanceof TypeError) {
+          alert("Invalid data: First input is not a number");
+        } 
+        else if (err instanceof WrongTypeError){
+          alert("Invalid data: Second input is not a number");
+        }
+        else{
+          throw err;
+        }
+      }
+      finally {
+        alert("Finished checking for error");
+      }
+
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
     });
 
@@ -102,6 +192,44 @@
 
     // Start your code here
     // You may move this JS to another file if you wish
+    function demoGroupStart() {
+      console.group("Demo Group Start");
+    }
+
+    function demoGroupEnd() {
+      console.groupEnd("Demo Group End");
+    }
+
+    function demoTable() {
+      console.table([
+        { 'Course': "CSE 110", 'Grade': "A", 'Absent?': false },
+        { 'Course': "POLI 28", 'Grade': "A", 'Absent?': false},
+        { 'Course': "ECE 65", 'Grade': "A", 'Absent?': true },
+      ]);
+    }
+
+    function demoTimerStart() {
+      console.log("Timer starts");
+      console.time();
+    }
+
+    function demoTimerEnd() {
+      console.log("Timer ends");
+      console.timeEnd();
+    }
+
+    function dummyFunction() {
+      console.trace();
+    }
+
+    function demoTrace() {
+      dummyFunction();
+    }
+
+    function demoGlobalError(){
+      // This should gives a ReferenceError as a global error
+      console.log(globalError);
+    }
   </script>
 </body>
 
